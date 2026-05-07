@@ -1,0 +1,13 @@
+sources:
+  - name: my_new_project
+    database: INPATIENT_BILLING
+    schema: INPATIENT_SCHEMA
+    tables:
+      - name: ADMISSIONS
+      - name: CHARGES
+      - name: DIAGNOSES
+      - name: INSURANCE
+      - name: PATIENTS
+      - name: PAYMENTS
+      - name: PROCEDURES
+      - name: PROVIDERS
