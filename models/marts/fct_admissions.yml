@@ -1,0 +1,103 @@
+models:
+  - name: fct_admissions
+    description: Fact table at the admission grain with rolled-up charges per admission.
+    semantic_model:
+      enabled: true
+      name: admissions
+
+    agg_time_dimension: admission_date
+
+    columns:
+      - name: admission_id
+        description: Unique identifier for an admission.
+        data_tests:
+          - not_null
+          - unique
+        entity:
+          type: primary
+          name: admission
+
+      - name: patient_id
+        description: Identifier for the patient associated with the admission.
+        data_tests:
+          - not_null
+        entity:
+          type: foreign
+          name: patient
+
+      - name: provider_id
+        description: Identifier for the provider associated with the admission.
+        entity:
+          type: foreign
+          name: provider
+
+      - name: insurance_id
+        description: Identifier for the insurance policy associated with the admission.
+        entity:
+          type: foreign
+          name: insurance
+
+      - name: admission_date
+        description: Timestamp when the admission started.
+        data_tests:
+          - not_null
+        granularity: day
+        dimension:
+          type: time
+
+      - name: discharge_date
+        description: Timestamp when the patient was discharged.
+        granularity: day
+        dimension:
+          type: time
+
+      - name: admission_type
+        description: Admission classification for the encounter.
+        dimension:
+          type: categorical
+
+      - name: discharge_status
+        description: Discharge outcome or status for the admission.
+        dimension:
+          type: categorical
+
+      - name: drg_code
+        description: DRG code assigned to the admission.
+        dimension:
+          type: categorical
+
+      - name: drg_description
+        description: DRG description assigned to the admission.
+        dimension:
+          type: categorical
+
+      - name: length_of_stay
+        description: Length of stay associated with the admission.
+
+      - name: charge_count
+        description: Number of charge records associated with the admission.
+
+      - name: total_charges
+        description: Total amount charged across all charge records for the admission.
+
+    metrics:
+      - name: admission_count
+        description: Count of admissions.
+        label: Admission Count
+        type: simple
+        agg: count_distinct
+        expr: admission_id
+
+      - name: total_charges
+        description: Total charges across admissions.
+        label: Total Charges
+        type: simple
+        agg: sum
+        expr: total_charges
+
+      - name: average_total_charges
+        description: Average total charges per admission.
+        label: Average Total Charges
+        type: simple
+        agg: average
+        expr: total_charges
