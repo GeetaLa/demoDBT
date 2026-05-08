@@ -51,8 +51,40 @@ models:
         dimension:
           type: time
 
+      - name: created_at
+        description: Timestamp when the admission record was created.
+        granularity: day
+        dimension:
+          type: time
+
+      - name: updated_at
+        description: Timestamp when the admission record was last updated.
+        granularity: day
+        dimension:
+          type: time
+
       - name: admission_type
         description: Admission classification for the encounter.
+        dimension:
+          type: categorical
+
+      - name: room_number
+        description: Room assigned during the admission.
+        dimension:
+          type: categorical
+
+      - name: bed_number
+        description: Bed assigned during the admission.
+        dimension:
+          type: categorical
+
+      - name: floor
+        description: Facility floor associated with the admission.
+        dimension:
+          type: categorical
+
+      - name: admission_diagnosis
+        description: Diagnosis captured at the time of admission.
         dimension:
           type: categorical
 
@@ -88,6 +120,20 @@ models:
         agg: count_distinct
         expr: admission_id
 
+      - name: total_length_of_stay
+        description: Total inpatient days across admissions.
+        label: Total Length of Stay
+        type: simple
+        agg: sum
+        expr: length_of_stay
+
+      - name: total_charge_count
+        description: Total number of charge records across admissions.
+        label: Total Charge Count
+        type: simple
+        agg: sum
+        expr: charge_count
+
       - name: total_charges
         description: Total charges across admissions.
         label: Total Charges
@@ -95,9 +141,30 @@ models:
         agg: sum
         expr: total_charges
 
-      - name: average_total_charges
-        description: Average total charges per admission.
-        label: Average Total Charges
-        type: simple
-        agg: average
-        expr: total_charges
+      - name: average_length_of_stay
+        description: Average inpatient days per admission.
+        label: Average Length of Stay
+        type: ratio
+        numerator: total_length_of_stay
+        denominator: admission_count
+
+      - name: charges_per_admission
+        description: Average charges generated per admission.
+        label: Charges per Admission
+        type: ratio
+        numerator: total_charges
+        denominator: admission_count
+
+      - name: charges_per_inpatient_day
+        description: Average charges generated per inpatient day.
+        label: Charges per Inpatient Day
+        type: ratio
+        numerator: total_charges
+        denominator: total_length_of_stay
+
+      - name: charges_per_admission_record
+        description: Average number of charge records captured per admission.
+        label: Charges per Admission Record
+        type: ratio
+        numerator: total_charge_count
+        denominator: admission_count
